@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { actionUserName } from '../../../config/redux/action'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { actionUserName } from '../../../config/redux/action';
 
 class Login extends Component {
     changeUser = () => {
@@ -26,7 +26,7 @@ const reduxState = (state) => ({
 })
 
 const reduxDispatch = (dispatch) => ({
-    changeUserName: () => dispatch(actionUserName)
+    changeUserName: () => dispatch(actionUserName())
 }) 
 
 export default connect(reduxState, reduxDispatch)(Login);
