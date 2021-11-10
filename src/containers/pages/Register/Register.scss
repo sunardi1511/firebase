@@ -51,4 +51,11 @@ button.btn {
         background: #ced69e;
         cursor: pointer;
     }
+    &.disable{
+        background: gray;
+        border: 1px solid gray;
+        &:hover{
+            cursor: not-allowed;
+        }
+    }
 }
