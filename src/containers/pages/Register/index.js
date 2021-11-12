@@ -1,45 +1,28 @@
-import React, { Component } from 'react'
-import './Register.scss'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import firebase  from '../../../config/firebase';
-import Buttom from '../../../components/atoms/Buttom';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Buttom from '../../../components/atoms/Buttom';
 import { registerUseAPI } from '../../../config/redux/action';
+import './Register.scss';
 
 class Register extends Component {
     state = {
         email: '',
-        password: ''
+        password: '' 
     }
 
     handleChangeText = (e) => {
-        // console.log(e.target.id)
         this.setState({
             [e.target.id]: e.target.value,
         })
     }
 
     handleRegisterSubmit = () => {
-        const {email,password}=this.state
-        console.log('email: ', email)
-        console.log('password: ', password)
-        this.props.registerUseAPI({email, password})
-
-        // const auth = getAuth(firebase);
-        // createUserWithEmailAndPassword(auth, email, password)
-        //     .then((userCredential) => {
-        //         // Signed in 
-        //         const user = userCredential.user;
-        //         // ...
-                
-        //     })
-        //     .catch((error) => {
-        //         const errorCode = error.code;
-        //         const errorMessage = error.message;
-        //         // ..
-        //         console.log(errorCode, errorMessage)
-        //     });
-
+        const { email, password } = this.state;
+        this.props.RegisterAPI({ email, password })
+        this.setState({
+            email: '',
+            password: ''
+        })
     }
 
 
@@ -48,11 +31,25 @@ class Register extends Component {
             <div className="auth-container">
                 <div className="auth-card">
                     <p className="auth-title">Register page</p>
-                    <input className="input" id='email' placeholder="Email" type="text" onChange={this.handleChangeText} />
-                    <input className="input" id='password' placeholder="password" type="password" onChange={this.handleChangeText} />
-                    <Buttom onClick={this.handleChangeText} title="Register"/>
+                    <input
+                        className="input"
+                        id='email'
+                        placeholder="Email"
+                        type="text"
+                        onChange={this.handleChangeText}
+                        value={this.state.email} />
+                    <input
+                        className="input"
+                        id='password'
+                        placeholder="password"
+                        type="password"
+                        onChange={this.handleChangeText}
+                        value={this.state.password} />
+                    <Buttom
+                        onClick={this.handleRegisterSubmit}
+                        loading={this.props.isLoading}
+                        title="Register" />
                 </div>
-                {/* <button>Go to Dashboard</button> */}
             </div>
         )
     }
@@ -63,7 +60,7 @@ const reduxState = (state) => ({
 })
 
 const reduxDispatch = (dispacth) => ({
-    RegisterAPI: (data) => dispacth(registerUseAPI(data))  
+    RegisterAPI: (data) => dispacth(registerUseAPI(data))
 })
 
 
