@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Buttom from '../../../components/atoms/Buttom';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { loginUseAPI } from '../../../config/redux/action';
 
 class Login extends Component {
@@ -18,17 +18,17 @@ class Login extends Component {
 
     handleLoginSubmit = async () => {
         const { email, password } = this.state;
-        const navigate = this.props
-       const userCredential = await this.props.loginUserAPI({ email, password })
-        .catch(err=>err);
-        if(userCredential){
+        const { history } = this.props
+        const userCredential = await this.props.loginUserAPI({ email, password })
+            .catch(err => err);
+        if (userCredential) {
             console.log('login success')
             this.setState({
                 email: '',
                 password: ''
             })
-            navigate('/')
-        }else {
+            history.push('/') 
+        } else {
             console.log(`login failed`)
         }
 
@@ -38,33 +38,33 @@ class Login extends Component {
     render() {
         return (
             <div className="auth-container">
-            <div className="auth-card">
-                <p className="auth-title">Login page</p>
-                <input
-                    className="input"
-                    id='email'
-                    placeholder="Email"
-                    type="text"
-                    onChange={this.handleChangeText}
-                    value={this.state.email} />
-                <input
-                    className="input"
-                    id='password'
-                    placeholder="password"
-                    type="password"
-                    onChange={this.handleChangeText}
-                    value={this.state.password} />
-                <Buttom
-                    onClick={this.handleLoginSubmit}
-                    loading={this.props.isLoading}
-                    title="Login" />
+                <div className="auth-card">
+                    <p className="auth-title">Login page</p>
+                    <input
+                        className="input"
+                        id='email'
+                        placeholder="Email"
+                        type="text"
+                        onChange={this.handleChangeText}
+                        value={this.state.email} />
+                    <input
+                        className="input"
+                        id='password'
+                        placeholder="password"
+                        type="password"
+                        onChange={this.handleChangeText}
+                        value={this.state.password} />
+                    <Buttom
+                        onClick={this.handleLoginSubmit}
+                        loading={this.props.isLoading}
+                        title="Login" />
+                </div>
             </div>
-        </div>
         )
     }
 }
 
- 
+
 
 const reduxState = (state) => ({
     isLoading: state.isLoading
@@ -75,4 +75,4 @@ const reduxDispatch = (dispacth) => ({
 })
 
 
-export default useNavigate(connect(reduxState, reduxDispatch)(Login));
+export default withRouter(connect(reduxState, reduxDispatch)(Login));
