@@ -23,6 +23,8 @@ class Login extends Component {
             .catch(err => err);
         if (userCredential) {
             console.log('login success')
+
+            localStorage.setItem('userData', JSON.stringify(userCredential))
             this.setState({
                 email: '',
                 password: ''

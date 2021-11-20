@@ -1,6 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import firebase, {database} from "../../firebase";
-import { getDatabase, ref, set, push } from "firebase/database";
+import { getDatabase, ref, set, push, onValue } from "firebase/database";
 
 export const actionUserName = () => (dispatch) => {
     setTimeout(() => {
@@ -17,7 +17,7 @@ export const registerUseAPI = (data) => (dispatch) => {
                 // Signed in 
                 // const user = userCredential.user;
                 // ...
-                dispatch({ type: 'CHANGE_LOADING', value: false })
+                dispatch({ type: 'CHANGE_LOADING', value: false }) 
 
             })
             .catch((error) => {
@@ -70,5 +70,25 @@ export const addDataToAPI = (data) => (dispatch) => {
         content: data.content,
         date: data.date
 
+    })
+}
+
+export const getDataFromAPI = (userId) => (dispatch) => {
+    const db = getDatabase();
+    const starCountRef = ref(db, 'notes/' + userId);
+    return new Promise((resolve, reject) => {
+        onValue(starCountRef, (snapshot) => {
+            console.log('get data: ',snapshot.val());
+            const data = [];
+            Object.keys(snapshot.val()).map(key => {
+                data.push({
+                    id: key,
+                    data: snapshot.val()[key]
+                })
+            });
+
+            dispatch({type: 'SET_NOTES', value: data});
+            resolve(snapshot.val())
+          });
     })
 }
