@@ -1,6 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import firebase, {database} from "../../firebase";
-import { getDatabase, ref, set, push, onValue } from "firebase/database";
+import firebase, { database } from "../../firebase";
+import { getDatabase, ref, set, push, onValue, remove} from "firebase/database";
 
 export const actionUserName = () => (dispatch) => {
     setTimeout(() => {
@@ -17,7 +17,7 @@ export const registerUseAPI = (data) => (dispatch) => {
                 // Signed in 
                 // const user = userCredential.user;
                 // ...
-                dispatch({ type: 'CHANGE_LOADING', value: false }) 
+                dispatch({ type: 'CHANGE_LOADING', value: false })
 
             })
             .catch((error) => {
@@ -63,9 +63,8 @@ export const loginUseAPI = (data) => (dispatch) => {
 }
 
 export const addDataToAPI = (data) => (dispatch) => {
-    console.log(`data`, data)
     const db = getDatabase(firebase);
-    push(ref(db, 'notes/' + data.userId),{
+    push(ref(db, 'notes/' + data.userId), {
         title: data.title,
         content: data.content,
         date: data.date
@@ -78,7 +77,7 @@ export const getDataFromAPI = (userId) => (dispatch) => {
     const starCountRef = ref(db, 'notes/' + userId);
     return new Promise((resolve, reject) => {
         onValue(starCountRef, (snapshot) => {
-            console.log('get data: ',snapshot.val());
+            console.log('get data: ', snapshot.val());
             const data = [];
             Object.keys(snapshot.val()).map(key => {
                 data.push({
@@ -87,8 +86,48 @@ export const getDataFromAPI = (userId) => (dispatch) => {
                 })
             });
 
-            dispatch({type: 'SET_NOTES', value: data});
+            dispatch({ type: 'SET_NOTES', value: data });
             resolve(snapshot.val())
-          });
+        });
+    })
+}
+
+export const updateDataAPI = (data) => (dispatch) => {
+    const db = getDatabase();
+    const starCountRef = ref(db, `notes/${data.userId}/${data.noteId}`);
+    return new Promise((resolve, reject) => {
+        set(starCountRef, {
+            title: data.title,
+            content: data.content,
+            date: data.date
+        }).then(res => {
+            console.log(`res`, res)
+        }).catch(err => {
+            console.log(`err`, err)
+        })
+        // starCountRef.set({
+        //     title: data.title,
+        //     content: data.content,
+        //     date: data.date
+        // }, (err) => {
+        //     if (err) {
+        //         reject(false);
+        //     } else {
+        //         resolve(true)
+        //     }
+        // });
+    })
+}
+
+export const deleteDataAPI = (data) => (dispatch) => {
+    const db = getDatabase();
+    const starCountRef = ref(db, `notes/${data.userId}/${data.noteId}`);
+    return new Promise((resolve, reject) => {
+        remove(starCountRef)
+        .then(res => {
+            console.log(`res`, res)
+        }).catch(err => {
+            console.log(`err`, err)
+        })
     })
 }
