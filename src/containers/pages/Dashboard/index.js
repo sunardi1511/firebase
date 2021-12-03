@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux';
 import './Dashboard.scss';
 import { addDataToAPI, deleteDataAPI, getDataFromAPI, updateDataAPI } from '../../../config/redux/action';
+import { withRouter } from "react-router-dom"
 
 class Dashboard extends Component {
     state = {
@@ -14,7 +15,12 @@ class Dashboard extends Component {
 
     componentDidMount() {
         const userData = JSON.parse(localStorage.getItem('userData'));
-        this.props.getNotes(userData.uid);
+        const { history } = this.props
+        if (!userData) {
+            history.push('/register') 
+        }else{
+            this.props.getNotes(userData.uid);
+        }
     }
 
     handleSaveNotes = () => {
@@ -35,9 +41,7 @@ class Dashboard extends Component {
             data.noteId = noteId;
             updateNotes(data)
         }
-        saveNotes(data)
 
-        console.log(data)
     }
 
     onInputChange = (e, type) => {
@@ -78,7 +82,6 @@ class Dashboard extends Component {
     render() {
         const { title, content, textButtom } = this.state;
         const { notes } = this.props;
-        console.log(`notes`, notes);
         const { updateNotes, cancelUpdate, deleteNotes } = this;
         return (
             <div className="container">
@@ -95,7 +98,7 @@ class Dashboard extends Component {
                     </textarea>
                     <div className="action-wrapper">
                         <button className="save-btn cancel"
-                            onClick={this.handleSaveNotes} onClick={cancelUpdate} >CANCEL</button>
+                             onClick={cancelUpdate} >CANCEL</button>
                         <button className="save-btn"
                             onClick={this.handleSaveNotes}>{textButtom}</button>
                     </div>
@@ -136,4 +139,4 @@ const reduxDispatch = (dispatch) => ({
     deleteNotes: (data) => dispatch(deleteDataAPI(data))
 })
 
-export default connect(reduxState, reduxDispatch)(Dashboard);
+export default withRouter(connect(reduxState, reduxDispatch)(Dashboard));

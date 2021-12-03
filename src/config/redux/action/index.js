@@ -1,6 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import firebase, { database } from "../../firebase";
-import { getDatabase, ref, set, push, onValue, remove} from "firebase/database";
+import { getDatabase, ref, set, push, onValue, remove } from "firebase/database";
 
 export const actionUserName = () => (dispatch) => {
     setTimeout(() => {
@@ -79,13 +79,14 @@ export const getDataFromAPI = (userId) => (dispatch) => {
         onValue(starCountRef, (snapshot) => {
             console.log('get data: ', snapshot.val());
             const data = [];
-            Object.keys(snapshot.val()).map(key => {
-                data.push({
-                    id: key,
-                    data: snapshot.val()[key]
-                })
-            });
-
+            if (snapshot.val()) {
+                Object.keys(snapshot.val()).map(key => {
+                    data.push({
+                        id: key,
+                        data: snapshot.val()[key]
+                    })
+                });
+            }
             dispatch({ type: 'SET_NOTES', value: data });
             resolve(snapshot.val())
         });
@@ -124,10 +125,10 @@ export const deleteDataAPI = (data) => (dispatch) => {
     const starCountRef = ref(db, `notes/${data.userId}/${data.noteId}`);
     return new Promise((resolve, reject) => {
         remove(starCountRef)
-        .then(res => {
-            console.log(`res`, res)
-        }).catch(err => {
-            console.log(`err`, err)
-        })
+            .then(res => {
+                console.log(`res`, res)
+            }).catch(err => {
+                console.log(`err`, err)
+            })
     })
 }
